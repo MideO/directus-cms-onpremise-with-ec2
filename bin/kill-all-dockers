@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+DOCKER_PS="$(docker ps -q)"
+
+if [[ "$DOCKER_PS" != "" ]]  
+then
+    docker kill $DOCKER_PS
+fi
+

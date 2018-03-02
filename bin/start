@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+DOCKER="$(docker-compose 2>&1)"
+if [[  "$DOCKER" = *"command not found"* ]]  
+then
+    echo "warning:  docker-compose not found on machine..."
+    echo "warning:  installing docker-compose..."
+    curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` > docker-compose
+    mv docker-compose /usr/bin/docker-compose
+    chmod +x /usr/bin/docker-compose
+fi
+docker-compose up -d

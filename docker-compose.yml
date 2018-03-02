@@ -1,0 +1,51 @@
+version: '2'
+services:
+  mysql:
+    image: mysql:5.5
+    container_name: mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=directus
+      - MYSQL_USER=directus
+      - MYSQL_PASSWORD=directus
+
+    volumes:
+      - "./.data/db:/var/lib/mysql"
+  directus:
+    depends_on:
+       - mysql
+    image: getdirectus/directus:6.4
+    container_name: directus
+
+    ports:
+     - "8080:80"
+    restart: always
+    volumes:
+    # Switch between named storage, path storage
+      # - storage:/var/www/html/storage 
+      - ./.data/storage:/var/www/html/storage 
+    # Replace ~/Development/directus with your local directus git checkout
+    #    - ~/Development/directus:/var/www/html
+    environment:
+     - MYSQL_USER=directus
+     - MYSQL_PASSWORD=directus
+     - MYSQL_ENV_MYSQL_DATABASE=directus
+     - MYSQL_PORT_3306_TCP_ADDR=mysql
+     - MYSQL_PORT_3306_TCP_PORT=3306
+     - MYSQL_ENV_MYSQL_PASSWORD=directus
+     - MYSQL_ENV_MYSQL_USER=directus
+    # If you use docker for dev or want to test without opcache - disable with env var
+    #  - PHP_OPCACHE_ENABLED=false
+    #Alternatively The environment variables below to be set in using Amazon RDS
+    #  RDS_DB_NAME
+    #  RDS_HOSTNAME
+    #  RDS_PORT
+    #  RDS_PASSWORD
+    #  RDS_USERNAME
+
+volumes:
+  storage:
+    # If you want to define externally, uncomment and adjust as needed
+    # external:
+    #   name: directus-storage
